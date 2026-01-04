@@ -1,20 +1,23 @@
-import { Routes, Route } from "react-router-dom"
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+import { ExerciseProvider } from './context/ExerciseContext';
 import AppLayout from "./layout/AppLayout"
 
-import Dashboard from "./pages/Dashboard"
-import Users from "./pages/Users"
-import Settings from "./pages/Settings"
-import CreateUser from "./pages/CreateUser"
+import Dashboard from './pages/Dashboard';
+import AddTraining from './pages/AddTraining';
+import History from './pages/History';
 
 export default function App() {
   return (
-    <AppLayout>
-      <Routes>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/users" element={<Users />} />
-        <Route path="/users/create" element={<CreateUser />} />
-        <Route path="/settings" element={<Settings />} />
-      </Routes>
-    </AppLayout>
+    <ExerciseProvider>
+      <Router>
+        <AppLayout>
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/add-training" element={<AddTraining />} />
+            <Route path="/history" element={<History />} />
+          </Routes>
+        </AppLayout>
+      </Router>
+    </ExerciseProvider>
   )
 }

@@ -6,10 +6,10 @@ export const menu = [
     ]
   },
   {
-    section: "Users",
+    section: "Traning",
     items: [
-      { label: "All Users", path: "/users" },
-      { label: "Create User", path: "/users/create" }
+      { label: "Add Training", path: "/add-training" },
+      { label: "Training History", path: "/history" }
     ]
   }
 ];

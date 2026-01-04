@@ -6,16 +6,16 @@ export default function AppLayout({ children }) {
    const [sidebarOpen, setSidebarOpen] = useState(true);
 
    return (
-      <div
-         className="min-h-screen flex transition-colors duration-300"
-         style={{ backgroundColor: "var(--bg-main)", color: "var(--text-primary)" }}>
-         {/* Sidebar */}
          <div
-            className={`
-          fixed md:static z-20 h-full
-          transition-all duration-300
-          ${sidebarOpen ? "w-64" : "w-0"}
-        `}>
+             className="min-h-screen flex transition-colors duration-300"
+             style={{ backgroundColor: "var(--bg-main)", color: "var(--text-primary)" }}>
+             {/* Sidebar */}
+             <div
+                  className={`
+               fixed z-20 h-full
+               transition-all duration-300
+               ${sidebarOpen ? "w-64" : "w-0"}
+            `}>
             <Sidebar
                open={sidebarOpen}
                onNavigate={() => {
@@ -35,7 +35,9 @@ export default function AppLayout({ children }) {
          )}
 
          {/* Main content */}
-         <div className="flex-1 flex flex-col relative">
+         <div className={`flex-1 flex flex-col relative transition-all duration-300 pt-14 ${
+            sidebarOpen ? "md:ml-64" : "md:ml-0"
+         }`}>
             <Navbar
                sidebarOpen={sidebarOpen}
                onToggleSidebar={() => setSidebarOpen((prev) => !prev)}

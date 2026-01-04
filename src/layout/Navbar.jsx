@@ -4,7 +4,7 @@ import DarkModeToggle from "../components/DarkModeToggle";
 export default function Navbar({ sidebarOpen, onToggleSidebar }) {
   return (
     <header
-      className="relative h-14 flex items-center px-4 transition-colors duration-300"
+      className="fixed top-0 left-0 z-30 w-full h-14 flex items-center px-4 transition-colors duration-300"
       style={{
         backgroundColor: "var(--bg-navbar)",
         color: "var(--text-primary)"
