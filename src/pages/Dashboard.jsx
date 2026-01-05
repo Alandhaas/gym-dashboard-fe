@@ -10,17 +10,22 @@ const Dashboard = () => {
 
   const progressData = selectedExercise ? getProgressData(selectedExercise) : [];
 
-  // Calculate stats
   const stats = exerciseNames.reduce((acc, name) => {
     const data = getProgressData(name);
     if (data.length > 0) {
       const latest = data[data.length - 1];
       acc.totalExercises++;
-      acc.totalSessions += data.length;
+      data.forEach((d) => {
+        const dayKey = d.dateFormatted || (d.date ? new Date(d.date).toLocaleDateString() : null);
+        if (dayKey) acc.days.add(dayKey);
+      });
       acc.totalVolume += latest.totalVolume;
     }
     return acc;
-  }, { totalExercises: 0, totalSessions: 0, totalVolume: 0 });
+  }, { totalExercises: 0, totalSessions: 0, totalVolume: 0, days: new Set() });
+
+  stats.totalSessions = stats.days.size || 0;
+  delete stats.days;
 
   return (
     <div className="space-y-6">

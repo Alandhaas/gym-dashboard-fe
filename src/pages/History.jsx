@@ -8,10 +8,8 @@ const History = () => {
 
   const exerciseNames = getAllExerciseNames();
   
-  // Get all unique dates
   const allDates = [...new Set(exercises.map(e => e.date))].sort().reverse();
 
-  // Filter exercises
   let filteredExercises = exercises;
   if (selectedExercise) {
     filteredExercises = filteredExercises.filter(e => e.exercise === selectedExercise);
@@ -20,7 +18,6 @@ const History = () => {
     filteredExercises = filteredExercises.filter(e => e.date === filterDate);
   }
 
-  // Group by date
   const exercisesByDate = filteredExercises.reduce((acc, ex) => {
     if (!acc[ex.date]) {
       acc[ex.date] = [];
@@ -28,6 +25,8 @@ const History = () => {
     acc[ex.date].push(ex);
     return acc;
   }, {});
+
+
 
   const sortedDates = Object.keys(exercisesByDate).sort().reverse();
 
@@ -142,7 +141,7 @@ const History = () => {
                               .map((set) => (
                                 <tr key={set.id} className="hover:bg-gray-50">
                                   <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
-                                    {set.sets}
+                                    {set.set}
                                   </td>
                                   <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-700">
                                     {set.weight}

@@ -3,7 +3,7 @@ import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
 
 export default function AppLayout({ children }) {
-   const [sidebarOpen, setSidebarOpen] = useState(true);
+   const [sidebarOpen, setSidebarOpen] = useState(false);
 
    return (
          <div
