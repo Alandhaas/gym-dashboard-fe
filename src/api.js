@@ -1,5 +1,5 @@
-// const BASE = 'https://gym-dashboard-app-k3jaw.ondigitalocean.app';
-const BASE = 'http://localhost:8000';
+const BASE = 'https://gym-dashboard-app-k3jaw.ondigitalocean.app';
+// const BASE = 'http://localhost:8000';
 
 async function request(path, options = {}) {
   const res = await fetch(`${BASE}${path}`, {
@@ -18,10 +18,6 @@ async function request(path, options = {}) {
     return null;
   }
 }
-
-// --------------------
-// Auth
-// --------------------
 
 export async function register(username, password) {
   return request('/register', {
