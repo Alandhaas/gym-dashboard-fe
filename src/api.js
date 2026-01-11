@@ -1,5 +1,5 @@
-//const BASE = 'https://gym-dashboard-app-k3jaw.ondigitalocean.app';
-const BASE = 'http://localhost:8000';
+const BASE = 'https://gym-dashboard-app-k3jaw.ondigitalocean.app';
+//const BASE = 'http://localhost:8000';
 
 async function request(path, options = {}) {
   const res = await fetch(`${BASE}${path}`, {
