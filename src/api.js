@@ -1,5 +1,5 @@
-const BASE = 'https://gym-dashboard-app-k3jaw.ondigitalocean.app';
-// const BASE = 'http://localhost:8000';
+//const BASE = 'https://gym-dashboard-app-k3jaw.ondigitalocean.app';
+const BASE = 'http://localhost:8000';
 
 async function request(path, options = {}) {
   const res = await fetch(`${BASE}${path}`, {
@@ -57,10 +57,18 @@ export async function fetchTodayExercises(username) {
   return request(`/exercises/${encodeURIComponent(username)}/today`);
 }
 
+export async function updateExercise(username, exercise) {
+  return request(`/exercises/${encodeURIComponent(username)}`, {
+    method: 'PATCH',
+    body: JSON.stringify(exercise),
+  });
+}
+
 export default {
   register,
   login,
   saveExercise,
+  updateExercise,
   fetchAllExercises,
   fetchTodayExercises,
 };

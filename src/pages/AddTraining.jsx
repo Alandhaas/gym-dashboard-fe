@@ -2,7 +2,12 @@ import { useState } from 'react';
 import { useExercise } from '../context/ExerciseContext';
 
 const AddTraining = () => {
-  const { addExercise, getExercisesByDate, getAllExerciseNames } = useExercise();
+  const {
+    addExercise,
+    updateExercise,
+    getExercisesByDate,
+    getAllExerciseNames,
+  } = useExercise();
   const today = new Date().toISOString().split('T')[0];
   const todayExercises = getExercisesByDate(today);
 
@@ -12,10 +17,12 @@ const AddTraining = () => {
     reps: '',
     sets: '',
     rir: '',
+    date: '',
   });
   const [isAddingNew, setIsAddingNew] = useState(false);
 
   const [successMessage, setSuccessMessage] = useState('');
+  const [editValues, setEditValues] = useState({});
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -32,6 +39,7 @@ const AddTraining = () => {
         reps: parseInt(formData.reps),
         set: parseInt(formData.sets),
         rir: formData.rir || null,
+        date: formData.date || null,
       });
       setSuccessMessage('Exercise added successfully!');
       setSuccessMessage('');
@@ -48,7 +56,66 @@ const AddTraining = () => {
       reps: '',
       sets: '',
       rir: '',
+      date: '',
     });
+  };
+
+  const handleEditChange = (setId, field, value) => {
+    setEditValues((prev) => ({
+      ...prev,
+      [setId]: {
+        ...prev[setId],
+        [field]: value,
+      },
+    }));
+  };
+
+  const handleEditBlur = async (setEntry) => {
+    const edits = editValues[setEntry.id];
+    if (!edits) return;
+
+    const payload = {
+      exercise: setEntry.exercise,
+      set: setEntry.set,
+      date: setEntry.date || null,
+    };
+
+    if (edits.weight !== undefined && edits.weight !== '' && Number(edits.weight) !== setEntry.weight) {
+      payload.weight = parseFloat(edits.weight);
+    }
+    if (edits.reps !== undefined && edits.reps !== '' && Number(edits.reps) !== setEntry.reps) {
+      payload.reps = parseInt(edits.reps);
+    }
+    if (edits.rir !== undefined) {
+      if (edits.rir === '') {
+        payload.rir = null;
+      } else if (Number(edits.rir) !== setEntry.rir) {
+        payload.rir = parseInt(edits.rir);
+      }
+    }
+
+    if (payload.weight === undefined && payload.reps === undefined && payload.rir === undefined) {
+      return;
+    }
+
+    try {
+      await updateExercise(payload);
+      setEditValues((prev) => {
+        const next = { ...prev };
+        delete next[setEntry.id];
+        return next;
+      });
+    } catch (error) {
+      setSuccessMessage(`Error: ${error.message}`);
+      setTimeout(() => setSuccessMessage(''), 3000);
+    }
+  };
+
+  const getEditValue = (setEntry, field) => {
+    const edit = editValues[setEntry.id];
+    if (edit && edit[field] !== undefined) return edit[field];
+    if (field === 'rir') return setEntry.rir ?? '';
+    return setEntry[field] ?? '';
   };
 
   // Group today's exercises by name
@@ -173,6 +240,18 @@ const AddTraining = () => {
               />
             </div>
 
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Date (optional)
+              </label>
+              <input
+                type="date"
+                value={formData.date}
+                onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                className="text-gray-700 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+
             <button
               type="submit"
               className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
@@ -199,14 +278,44 @@ const AddTraining = () => {
                     {sets.map((set) => (
                       <div
                         key={set.id}
-                        className="flex items-center justify-between text-sm bg-gray-50 p-2 rounded"
+                        className="grid grid-cols-1 gap-2 text-sm bg-gray-50 p-3 rounded md:grid-cols-5 md:items-center"
                       >
-                        <span className="text-gray-600">
-                          Set {set.set ?? set.sets}: {set.weight}kg × {set.reps} reps
+                        <span className="text-gray-600 md:col-span-1">
+                          Set {set.set ?? set.sets}
                         </span>
-                        {set.rir !== '' && (
-                          <span className="text-blue-600 font-medium">RIR: {set.rir}</span>
-                        )}
+                        <input
+                          type="number"
+                          step="0.5"
+                          min="0"
+                          value={getEditValue(set, 'weight')}
+                          onChange={(e) => handleEditChange(set.id, 'weight', e.target.value)}
+                          onBlur={() => handleEditBlur(set)}
+                          className="text-gray-700 w-full px-2 py-1 border border-gray-300 rounded"
+                          aria-label="Weight"
+                        />
+                        <input
+                          type="number"
+                          min="1"
+                          value={getEditValue(set, 'reps')}
+                          onChange={(e) => handleEditChange(set.id, 'reps', e.target.value)}
+                          onBlur={() => handleEditBlur(set)}
+                          className="text-gray-700 w-full px-2 py-1 border border-gray-300 rounded"
+                          aria-label="Reps"
+                        />
+                        <input
+                          type="number"
+                          min="0"
+                          value={getEditValue(set, 'rir')}
+                          onChange={(e) => handleEditChange(set.id, 'rir', e.target.value)}
+                          onBlur={() => handleEditBlur(set)}
+                          className="text-gray-700 w-full px-2 py-1 border border-gray-300 rounded"
+                          placeholder="RIR"
+                          aria-label="RIR"
+                        />
+                        <span className="text-gray-500 md:text-right">
+                          {set.weight}kg × {set.reps}
+                          {set.rir !== '' && set.rir !== null ? `, RIR ${set.rir}` : ''}
+                        </span>
                       </div>
                     ))}
                   </div>
@@ -221,4 +330,3 @@ const AddTraining = () => {
 };
 
 export default AddTraining;
-
